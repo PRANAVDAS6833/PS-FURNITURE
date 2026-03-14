@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Admin Dashboard – PS Furniture</title>
+  <meta name="robots" content="noindex,nofollow"/>
+  <link rel="stylesheet" href="../css/admin.css"/>
+</head>
+<body>
+<!-- AUTH GUARD -->
+<script src="../js/data.js"></script>
+<script>if (!isAdminLoggedIn()) window.location.href = 'index.html';</script>
+
+<div class="admin-layout">
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="admin-sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-logo-icon">🛋️</div>
+      <div class="sidebar-logo-text">PS <span>Furniture</span></div>
+      <div class="sidebar-badge">Admin</div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-section-label">Main</div>
+      <button class="sidebar-nav-item active" id="nav-overview" onclick="showSection('overview')"><span class="icon">📊</span> Overview</button>
+      <button class="sidebar-nav-item" id="nav-products" onclick="showSection('products')"><span class="icon">🛋️</span> Products</button>
+      <button class="sidebar-nav-item" id="nav-orders" onclick="showSection('orders')"><span class="icon">📦</span> Orders</button>
+      <button class="sidebar-nav-item" id="nav-add" onclick="openProductModal()"><span class="icon">➕</span> Add Product</button>
+      <div class="nav-section-label" style="margin-top:12px;">Categories</div>
+      <button class="sidebar-nav-item" id="nav-categories" onclick="showSection('categories')"><span class="icon">🏷️</span> Categories</button>
+      <button class="sidebar-nav-item" id="nav-settings" onclick="showSection('settings')"><span class="icon">⚙️</span> Settings</button>
+      <div class="nav-section-label" style="margin-top:12px;">Website</div>
+      <a class="sidebar-nav-item" href="../index.html" target="_blank"><span class="icon">🌐</span> View Website</a>
+    </nav>
+    <div class="sidebar-footer">
+      <button class="btn btn-outline btn-sm" onclick="logout()" style="width:100%;justify-content:center;">🚪 Logout</button>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="admin-main">
+    <div class="admin-topbar">
+      <div class="topbar-title" id="topbar-title">Overview</div>
+      <div class="topbar-right">
+        <div class="admin-badge">👤 Admin</div>
+        <button class="btn btn-gold btn-sm" onclick="openProductModal()">+ Add Product</button>
+      </div>
+    </div>
+    <div class="admin-content">
+
+      <!-- OVERVIEW SECTION -->
+      <div id="section-overview">
+        <div class="stats-grid" id="stats-grid"></div>
+        <div class="section-title">Recent Products <a href="#" onclick="showSection('products')" style="font-size:0.8rem;color:var(--gold);font-weight:500;font-family:'Inter',sans-serif;">View all →</a></div>
+        <div class="admin-product-grid" id="recent-products"></div>
+      </div>
+
+      <!-- PRODUCTS SECTION -->
+      <div id="section-products" style="display:none;">
+        <div class="section-title">
+          <span>All Products</span>
+          <div style="display:flex;gap:10px;align-items:center;">
+            <div class="admin-search"><span class="icon">🔍</span><input type="text" id="admin-search" placeholder="Search…" oninput="renderProducts()"/></div>
+            <select class="form-control" id="admin-cat-filter" onchange="renderProducts()" style="width:160px;padding:10px 12px;font-size:0.85rem;">
+              <option value="">All Categories</option>
+            </select>
+            <button class="btn btn-gold btn-sm" onclick="openProductModal()">+ Add Product</button>
+          </div>
+        </div>
+        <div class="admin-product-grid" id="all-products"></div>
+        <div id="no-admin-products" class="empty-state" style="display:none;"><div class="icon">📦</div><p>No products found</p></div>
+      </div>
+
+      <!-- ORDERS SECTION -->
+      <div id="section-orders" style="display:none;">
+        <div class="section-title">
+          <span>Customer Orders</span>
+          <div class="admin-search"><span class="icon">🔍</span><input type="text" id="order-search" placeholder="Search orders…" oninput="renderOrders()"/></div>
+        </div>
+        <div class="orders-table-container">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Order ID</th>
+                <th>Date</th>
+                <th>Customer</th>
+                <th>Total</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="orders-list"></tbody>
+          </table>
+        </div>
+        <div id="no-orders" class="empty-state" style="display:none;"><div class="icon">📋</div><p>No orders yet</p></div>
+      </div>
+
+      <!-- CATEGORIES SECTION -->
+      <div id="section-categories" style="display:none;">
+        <div class="section-title">Manage Categories</div>
+        <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:28px;max-width:560px;">
+          <p style="color:var(--text-secondary);font-size:0.9rem;margin-bottom:20px;">Categories are derived automatically from your products. Add a product with a new category name and it will appear here.</p>
+          <div id="cat-list"></div>
+          <div style="margin-top:24px;display:flex;gap:10px;">
+            <input type="text" class="form-control" id="new-cat-input" placeholder="New category name…" style="flex:1;"/>
+            <button class="btn btn-gold" onclick="addCategory()">Add</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- SETTINGS SECTION -->
+      <div id="section-settings" style="display:none;">
+        <div class="section-title">Website Settings</div>
+        <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:32px;max-width:650px;">
+          <h4 style="margin-bottom:20px;color:var(--gold);">Contact Information</h4>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Phone Number</label>
+              <input type="text" class="form-control" id="s-phone" placeholder="+91 98765 43210"/>
+            </div>
+            <div class="form-group">
+              <label class="form-label">WhatsApp Number (with country code)</label>
+              <input type="text" class="form-control" id="s-whatsapp" placeholder="919876543210"/>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Email Address</label>
+            <input type="email" class="form-control" id="s-email" placeholder="info@psfurniture.com"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Showroom Address</label>
+            <textarea class="form-control" id="s-address" placeholder="Full address…" style="min-height:80px;"></textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Default WhatsApp Message</label>
+            <textarea class="form-control" id="s-wa-msg" placeholder="Hello PS Furniture! I'm interested in..." style="min-height:80px;"></textarea>
+          </div>
+          <div style="margin-top:24px;border-top:1px solid var(--border);padding-top:24px;text-align:right;">
+            <button class="btn btn-gold" onclick="saveSettings()">💾 Save Settings</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PRODUCT MODAL -->
+<div class="modal-overlay" id="product-modal" style="display:none;">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 id="modal-title">Add Product</h2>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="edit-id"/>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Product Name *</label>
+          <input type="text" class="form-control" id="p-name" placeholder="e.g. Royal Sofa" required/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Category *</label>
+          <input type="text" class="form-control" id="p-category" placeholder="e.g. Sofas" required list="cat-datalist"/>
+          <datalist id="cat-datalist"></datalist>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Price (₹) *</label>
+          <input type="number" class="form-control" id="p-price" placeholder="85000" required min="0"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Original Price (₹)</label>
+          <input type="number" class="form-control" id="p-original-price" placeholder="110000 (optional)" min="0"/>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Description *</label>
+        <textarea class="form-control" id="p-desc" placeholder="Describe the product in detail…" style="min-height:90px;" required></textarea>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Rating (0–5)</label>
+          <input type="number" class="form-control" id="p-rating" placeholder="4.8" min="0" max="5" step="0.1"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Review Count</label>
+          <input type="number" class="form-control" id="p-reviews" placeholder="124" min="0"/>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Tags (press Enter to add)</label>
+        <div class="tag-input" id="tag-input-area" onclick="document.getElementById('tag-field').focus()">
+          <span id="tags-display"></span>
+          <input type="text" id="tag-field" class="tag-input-field" placeholder="Bestseller, Sale…" onkeydown="handleTag(event)"/>
+        </div>
+        <input type="hidden" id="p-tags"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Product Images</label>
+        <p style="font-size:0.8rem;color:var(--text-muted);margin-bottom:10px;">Enter image URLs (Unsplash, Google Drive, etc.) or paste multiple separated by comma/new line.</p>
+        <textarea class="form-control" id="p-images" placeholder="https://images.unsplash.com/… &#10;https://images.unsplash.com/…" style="min-height:80px;" oninput="previewImages()"></textarea>
+        <div class="img-preview-grid" id="img-preview"></div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Specifications (Key: Value, one per line)</label>
+        <textarea class="form-control" id="p-specs" placeholder="Material: Premium Leather&#10;Dimensions: 220cm × 95cm × 85cm&#10;Colour: Cognac Brown" style="min-height:100px;"></textarea>
+      </div>
+      <div style="display:flex;gap:24px;margin-top:8px;">
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:0.875rem;">
+          <input type="checkbox" id="p-active" checked style="accent-color:var(--gold);width:16px;height:16px;"/> Active (visible on website)
+        </label>
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:0.875rem;">
+          <input type="checkbox" id="p-featured" style="accent-color:var(--gold);width:16px;height:16px;"/> Featured on Home Page
+        </label>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-gold" onclick="saveProduct()">💾 Save Product</button>
+    </div>
+  </div>
+</div>
+
+<!-- DELETE CONFIRM MODAL -->
+<div class="modal-overlay" id="delete-modal" style="display:none;">
+  <div class="modal" style="max-width:400px;">
+    <div class="modal-header"><h2>Confirm Delete</h2><button class="modal-close" onclick="closeDeleteModal()">✕</button></div>
+    <div class="modal-body">
+      <p style="color:var(--text-secondary);">Are you sure you want to delete <strong id="delete-name" style="color:var(--text-primary);"></strong>? This action cannot be undone.</p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeDeleteModal()">Cancel</button>
+      <button class="btn btn-danger" onclick="confirmDelete()">🗑️ Delete</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast-container" id="toast-container"></div>
+
+<script>
+let currentTags = [];
+let deleteTargetId = null;
+let currentSection = 'overview';
+
+function logout() { adminLogout(); window.location.href = 'index.html'; }
+
+function showSection(name) {
+  ['overview','products','orders','categories','settings'].forEach(s => {
+    const el = document.getElementById(`section-${s}`);
+    if (el) el.style.display = s === name ? 'block' : 'none';
+    const navEl = document.getElementById(`nav-${s}`);
+    if (navEl) navEl.classList.toggle('active', s === name);
+  });
+  const titles = { overview: 'Overview', products: 'Product Management', orders: 'Customer Orders', categories: 'Categories', settings: 'Website Settings' };
+  document.getElementById('topbar-title').textContent = titles[name] || name;
+  document.getElementById('topbar-title').textContent = titles[name] || name;
+  currentSection = name;
+  if (name === 'overview') renderOverview();
+  if (name === 'products') renderProducts();
+  if (name === 'orders') renderOrders();
+  if (name === 'categories') renderCategories();
+  if (name === 'settings') loadSettings();
+}
+
+function renderOverview() {
+  const products = getProducts();
+  const active = products.filter(p => p.active).length;
+  const featured = products.filter(p => p.featured).length;
+  const cats = new Set(products.map(p => p.category)).size;
+  document.getElementById('stats-grid').innerHTML = `
+    <div class="stat-card"><div class="stat-card-top"><div><div class="stat-num">${products.length}</div><div class="stat-label">Total Products</div></div><div class="stat-icon" style="background:rgba(201,168,76,0.1);">🛋️</div></div></div>
+    <div class="stat-card"><div class="stat-card-top"><div><div class="stat-num">${active}</div><div class="stat-label">Active Products</div></div><div class="stat-icon" style="background:rgba(37,211,102,0.1);">✅</div></div></div>
+    <div class="stat-card"><div class="stat-card-top"><div><div class="stat-num">${featured}</div><div class="stat-label">Featured</div></div><div class="stat-icon" style="background:rgba(201,168,76,0.1);">⭐</div></div></div>
+    <div class="stat-card"><div class="stat-card-top"><div><div class="stat-num">${cats}</div><div class="stat-label">Categories</div></div><div class="stat-icon" style="background:rgba(66,133,244,0.1);">🏷️</div></div></div>`;
+  const recent = [...getProducts()].slice(-6).reverse();
+  document.getElementById('recent-products').innerHTML = recent.map(p => productCardHTML(p)).join('');
+}
+
+function renderProducts() {
+  const q = (document.getElementById('admin-search')?.value || '').toLowerCase();
+  const cat = document.getElementById('admin-cat-filter')?.value || '';
+  const cats = getCategories();
+  const catSel = document.getElementById('admin-cat-filter');
+  if (catSel) {
+    catSel.innerHTML = '<option value="">All Categories</option>' + cats.map(c => `<option value="${c}" ${c===cat?'selected':''}>${c}</option>`).join('');
+  }
+  let products = getProducts();
+  if (q) products = products.filter(p => p.name.toLowerCase().includes(q) || p.category.toLowerCase().includes(q));
+  if (cat) products = products.filter(p => p.category === cat);
+  const container = document.getElementById('all-products');
+  const noRes = document.getElementById('no-admin-products');
+  if (!products.length) { container.innerHTML = ''; noRes.style.display = 'block'; return; }
+  noRes.style.display = 'none';
+  container.innerHTML = products.map(p => productCardHTML(p)).join('');
+}
+
+function productCardHTML(p) {
+  return `
+  <div class="admin-card" id="admin-card-${p.id}">
+    <div class="admin-card-img">
+      <img src="${p.images[0] || 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=400'}" alt="${p.name}" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=400'"/>
+      <span class="admin-card-status ${p.active ? 'status-active' : 'status-inactive'}">${p.active ? '● Active' : '● Inactive'}</span>
+    </div>
+    <div class="admin-card-body">
+      <div class="admin-card-cat">${p.category} ${p.featured ? '⭐' : ''}</div>
+      <div class="admin-card-name">${p.name}</div>
+      <div class="admin-card-price">₹${p.price.toLocaleString('en-IN')}</div>
+    </div>
+    <div class="admin-card-actions">
+      <button class="btn-edit" onclick="openProductModal(${p.id})">✏️ Edit</button>
+      <button class="btn-del" onclick="openDeleteModal(${p.id})">🗑️</button>
+      <label class="toggle-switch" title="${p.active ? 'Deactivate' : 'Activate'}">
+        <input type="checkbox" ${p.active ? 'checked' : ''} onchange="toggleActive(${p.id},this.checked)"/>
+        <span class="toggle-slider"></span>
+      </label>
+    </div>
+  </div>`;
+}
+
+function renderCategories() {
+  const cats = getCategories();
+  const catCounts = {};
+  getProducts().forEach(p => { catCounts[p.category] = (catCounts[p.category] || 0) + 1; });
+  document.getElementById('cat-list').innerHTML = cats.length ? cats.map(c => `
+    </div>`).join('') : '<p style="color:var(--text-muted);">No categories yet.</p>';
+}
+
+function renderOrders() {
+  const orders = getOrders().reverse();
+  const q = (document.getElementById('order-search')?.value || '').toLowerCase();
+  const filtered = q ? orders.filter(o => o.id.toString().includes(q) || o.customer.name.toLowerCase().includes(q)) : orders;
+  const container = document.getElementById('orders-list');
+  const noRes = document.getElementById('no-orders');
+  
+  if (!filtered.length) { container.innerHTML = ''; noRes.style.display = 'block'; return; }
+  noRes.style.display = 'none';
+
+  container.innerHTML = filtered.map(o => `
+    <tr>
+      <td style="font-weight:700;color:var(--gold);">#${o.id}</td>
+      <td style="font-size:0.8rem;color:var(--text-secondary);">${new Date(o.date).toLocaleDateString()}</td>
+      <td>
+        <div style="font-weight:600;">${o.customer.name}</div>
+        <div style="font-size:0.75rem;color:var(--text-muted);">${o.customer.phone}</div>
+      </td>
+      <td style="font-weight:700;">₹${o.total.toLocaleString('en-IN')}</td>
+      <td><span class="order-status status-${o.status.toLowerCase()}">${o.status}</span></td>
+      <td>
+        <div style="display:flex;gap:8px;">
+          <button class="btn-edit btn-sm" onclick="viewOrder(${o.id})">👁️ View</button>
+          <select class="form-control btn-sm" onchange="updateStatus(${o.id}, this.value)" style="width:110px;padding:4px 8px;">
+            <option value="Pending" ${o.status==='Pending'?'selected':''}>Pending</option>
+            <option value="Confirmed" ${o.status==='Confirmed'?'selected':''}>Confirmed</option>
+            <option value="Shipped" ${o.status==='Shipped'?'selected':''}>Shipped</option>
+            <option value="Delivered" ${o.status==='Delivered'?'selected':''}>Delivered</option>
+            <option value="Cancelled" ${o.status==='Cancelled'?'selected':''}>Cancelled</option>
+          </select>
+        </div>
+      </td>
+    </tr>
+  `).join('');
+}
+
+function updateStatus(id, status) {
+  const orders = getOrders();
+  const o = orders.find(x => x.id === id);
+  if (o) {
+    o.status = status;
+    saveOrders(orders);
+    showToast(`Order #${id} status updated to ${status}`);
+    renderOrders();
+  }
+}
+
+function viewOrder(id) {
+  const o = getOrders().find(x => x.id === id);
+  if (!o) return;
+  
+  const itemsHtml = o.items.map(i => `
+    <div style="display:flex;justify-content:space-between;margin-bottom:8px;font-size:0.9rem;">
+      <span>${i.name} x ${i.quantity}</span>
+      <span>₹${(i.price * i.quantity).toLocaleString('en-IN')}</span>
+    </div>
+  `).join('');
+
+  const modalHtml = `
+    <div class="modal-overlay" id="order-view-modal">
+      <div class="modal" style="max-width:500px;">
+        <div class="modal-header"><h2>Order #${o.id}</h2><button class="modal-close" onclick="this.closest('.modal-overlay').remove()">✕</button></div>
+        <div class="modal-body">
+          <div style="margin-bottom:20px;">
+            <h4 style="margin-bottom:8px;font-size:0.8rem;text-transform:uppercase;color:var(--text-muted);">Customer Information</h4>
+            <div style="background:var(--bg-secondary);padding:16px;border-radius:12px;">
+              <div style="font-weight:700;margin-bottom:4px;">${o.customer.name}</div>
+              <div style="margin-bottom:2px;">📞 ${o.customer.phone}</div>
+              <div style="margin-bottom:8px;">✉️ ${o.customer.email || 'N/A'}</div>
+              <div style="color:var(--text-secondary);font-size:0.9rem;">📍 ${o.customer.address}, ${o.customer.city}</div>
+            </div>
+          </div>
+          <div>
+            <h4 style="margin-bottom:8px;font-size:0.8rem;text-transform:uppercase;color:var(--text-muted);">Order Items</h4>
+            <div style="background:var(--bg-secondary);padding:16px;border-radius:12px;">
+              ${itemsHtml}
+              <div style="border-top:1px solid var(--border);margin-top:12px;padding-top:12px;display:flex;justify-content:space-between;font-weight:700;color:var(--gold);">
+                <span>Total Amount</span>
+                <span>₹${o.total.toLocaleString('en-IN')}</span>
+              </div>
+            </div>
+          </div>
+          <div style="margin-top:20px;display:flex;gap:12px;">
+            <a href="https://wa.me/${o.customer.phone.replace(/\D/g,'')}" target="_blank" class="btn btn-gold" style="flex:1;justify-content:center;">💬 Chat on WhatsApp</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+  document.body.insertAdjacentHTML('beforeend', modalHtml);
+}
+
+function addCategory() {
+  const val = document.getElementById('new-cat-input').value.trim();
+  if (!val) return;
+  showToast(`Category "${val}" will appear once a product is added with that category.`, 'success');
+  document.getElementById('new-cat-input').value = '';
+}
+
+// ===== SETTINGS =====
+function loadSettings() {
+  const contact = getContactDetails();
+  document.getElementById('s-phone').value = contact.phone || '';
+  document.getElementById('s-whatsapp').value = contact.whatsapp || '';
+  document.getElementById('s-email').value = contact.email || '';
+  document.getElementById('s-address').value = contact.address || '';
+  document.getElementById('s-wa-msg').value = contact.waMessage || '';
+}
+
+function saveSettings() {
+  const contact = {
+    phone: document.getElementById('s-phone').value.trim(),
+    whatsapp: document.getElementById('s-whatsapp').value.trim(),
+    email: document.getElementById('s-email').value.trim(),
+    address: document.getElementById('s-address').value.trim(),
+    waMessage: document.getElementById('s-wa-msg').value.trim()
+  };
+  
+  if (!contact.phone || !contact.email) {
+    showToast('Phone and Email are required', 'error');
+    return;
+  }
+  
+  saveContactDetails(contact);
+  showToast('Settings saved successfully!', 'success');
+}
+
+// ===== MODAL =====
+function openProductModal(id = null) {
+  resetForm();
+  if (id) {
+    const p = getProducts().find(x => x.id === id);
+    if (!p) return;
+    document.getElementById('modal-title').textContent = 'Edit Product';
+    document.getElementById('edit-id').value = p.id;
+    document.getElementById('p-name').value = p.name;
+    document.getElementById('p-category').value = p.category;
+    document.getElementById('p-price').value = p.price;
+    document.getElementById('p-original-price').value = p.originalPrice || '';
+    document.getElementById('p-desc').value = p.description;
+    document.getElementById('p-rating').value = p.rating || '';
+    document.getElementById('p-reviews').value = p.reviews || '';
+    document.getElementById('p-active').checked = p.active;
+    document.getElementById('p-featured').checked = p.featured;
+    document.getElementById('p-images').value = (p.images || []).join('\n');
+    document.getElementById('p-specs').value = Object.entries(p.specs || {}).map(([k,v]) => `${k}: ${v}`).join('\n');
+    currentTags = [...(p.tags || [])];
+    renderTags();
+    previewImages();
+  } else {
+    document.getElementById('modal-title').textContent = 'Add Product';
+  }
+  // Populate datalist
+  const dl = document.getElementById('cat-datalist');
+  dl.innerHTML = getCategories().map(c => `<option value="${c}"/>`).join('');
+  document.getElementById('product-modal').style.display = 'flex';
+}
+
+function resetForm() {
+  ['edit-id','p-name','p-category','p-price','p-original-price','p-desc','p-rating','p-reviews','p-images','p-specs','p-tags'].forEach(id => { const el = document.getElementById(id); if(el) el.value = ''; });
+  document.getElementById('p-active').checked = true;
+  document.getElementById('p-featured').checked = false;
+  document.getElementById('img-preview').innerHTML = '';
+  currentTags = [];
+  renderTags();
+}
+
+function closeModal() { document.getElementById('product-modal').style.display = 'none'; }
+
+function handleTag(e) {
+  if (e.key === 'Enter' || e.key === ',') {
+    e.preventDefault();
+    const val = e.target.value.trim().replace(/,$/,'');
+    if (val && !currentTags.includes(val)) { currentTags.push(val); renderTags(); }
+    e.target.value = '';
+  }
+}
+
+function renderTags() {
+  const display = document.getElementById('tags-display');
+  display.innerHTML = currentTags.map((t,i) => `<span class="tag-item">${t}<button onclick="removeTag(${i})">×</button></span>`).join('');
+}
+
+function removeTag(i) { currentTags.splice(i,1); renderTags(); }
+
+function previewImages() {
+  const raw = document.getElementById('p-images').value;
+  const urls = raw.split(/[\n,]+/).map(u => u.trim()).filter(Boolean);
+  document.getElementById('img-preview').innerHTML = urls.slice(0,6).map((u,i) => `
+    <div class="img-preview">
+      <img src="${u}" alt="Preview ${i+1}" onerror="this.parentElement.style.opacity='0.3'"/>
+      <button class="remove-img" onclick="removeImg(${i})">✕</button>
+    </div>`).join('');
+}
+
+function removeImg(i) {
+  const raw = document.getElementById('p-images').value;
+  const urls = raw.split(/[\n,]+/).map(u => u.trim()).filter(Boolean);
+  urls.splice(i,1);
+  document.getElementById('p-images').value = urls.join('\n');
+  previewImages();
+}
+
+function saveProduct() {
+  const name = document.getElementById('p-name').value.trim();
+  const category = document.getElementById('p-category').value.trim();
+  const price = parseFloat(document.getElementById('p-price').value);
+  const desc = document.getElementById('p-desc').value.trim();
+  if (!name || !category || !price || !desc) { showToast('Please fill in all required fields', 'error'); return; }
+  const imgRaw = document.getElementById('p-images').value;
+  const images = imgRaw.split(/[\n,]+/).map(u => u.trim()).filter(Boolean);
+  if (!images.length) images.push('https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=800&q=80');
+  const specsRaw = document.getElementById('p-specs').value.trim();
+  const specs = {};
+  specsRaw.split('\n').forEach(line => { const [k,...v] = line.split(':'); if(k&&v.length) specs[k.trim()] = v.join(':').trim(); });
+  const editId = document.getElementById('edit-id').value;
+  const products = getProducts();
+  const product = {
+    id: editId ? parseInt(editId) : getNextId(),
+    name, category, price,
+    originalPrice: parseFloat(document.getElementById('p-original-price').value) || null,
+    rating: parseFloat(document.getElementById('p-rating').value) || 4.5,
+    reviews: parseInt(document.getElementById('p-reviews').value) || 0,
+    description: desc,
+    specs, images,
+    tags: currentTags,
+    featured: document.getElementById('p-featured').checked,
+    active: document.getElementById('p-active').checked,
+  };
+  if (editId) {
+    const idx = products.findIndex(p => p.id === parseInt(editId));
+    if (idx > -1) products[idx] = product;
+    showToast('Product updated successfully!', 'success');
+  } else {
+    products.push(product);
+    showToast('Product added successfully!', 'success');
+  }
+  saveProducts(products);
+  closeModal();
+  if (currentSection === 'overview') renderOverview();
+  else renderProducts();
+}
+
+function toggleActive(id, val) {
+  const products = getProducts();
+  const p = products.find(x => x.id === id);
+  if (p) { p.active = val; saveProducts(products); showToast(`${p.name} is now ${val ? 'active' : 'inactive'}`, 'success'); }
+}
+
+function openDeleteModal(id) {
+  deleteTargetId = id;
+  const p = getProducts().find(x => x.id === id);
+  if (p) document.getElementById('delete-name').textContent = p.name;
+  document.getElementById('delete-modal').style.display = 'flex';
+}
+
+function closeDeleteModal() { document.getElementById('delete-modal').style.display = 'none'; deleteTargetId = null; }
+
+function confirmDelete() {
+  if (!deleteTargetId) return;
+  const products = getProducts().filter(p => p.id !== deleteTargetId);
+  saveProducts(products);
+  closeDeleteModal();
+  showToast('Product deleted', 'success');
+  if (currentSection === 'overview') renderOverview();
+  else renderProducts();
+}
+
+function showToast(message, type = 'success') {
+  const c = document.getElementById('toast-container');
+  const t = document.createElement('div');
+  t.className = `toast ${type}`;
+  t.innerHTML = `<span>${type==='success'?'✅':'❌'}</span><span>${message}</span>`;
+  c.appendChild(t);
+  setTimeout(() => t.remove(), 3500);
+}
+
+// Close modals on backdrop click
+document.getElementById('product-modal').addEventListener('click', e => { if(e.target.id==='product-modal') closeModal(); });
+document.getElementById('delete-modal').addEventListener('click', e => { if(e.target.id==='delete-modal') closeDeleteModal(); });
+
+// Init
+showSection('overview');
+</script>
+</body>
+</html>

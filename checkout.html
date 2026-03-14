@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Checkout – PS Furniture</title>
+  <link rel="stylesheet" href="css/style.css"/>
+  <style>
+    .checkout-layout { display: grid; grid-template-columns: 1fr 400px; gap: 40px; }
+    .checkout-form-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 40px; }
+    .order-summary-card { background: var(--bg-secondary); border: 1px solid var(--border-gold); border-radius: var(--radius-lg); padding: 32px; position: sticky; top: 90px; }
+    .summary-item { display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 0.9rem; }
+    .summary-total { border-top: 1px solid var(--border); padding-top: 16px; margin-top: 16px; color: var(--gold); font-size: 1.4rem; font-weight: 700; font-family: 'Playfair Display', serif; display: flex; justify-content: space-between; }
+    .success-panel { text-align: center; padding: 100px 20px; }
+    .success-icon { font-size: 4rem; margin-bottom: 24px; color: #25D366; }
+    @media(max-width:900px) { .checkout-layout { grid-template-columns: 1fr; } .order-summary-card { position: static; } }
+  </style>
+</head>
+<body>
+<div id="navbar-root"></div>
+<main>
+  <div class="page-header">
+    <div class="container">
+      <h1>Checkout <span class="gold">Details</span></h1>
+      <p>Please provide your delivery information to complete the order.</p>
+    </div>
+  </div>
+
+  <section class="section-pad" style="padding-top:20px;">
+    <div class="container">
+      <div id="checkout-content">
+        <div class="checkout-layout">
+          <div class="checkout-form-card">
+            <h3 style="margin-bottom:28px;font-family:'Inter',sans-serif;font-size:1.1rem;text-transform:uppercase;letter-spacing:1px;">Delivery Information</h3>
+            <form id="checkout-form" onsubmit="handlePlaceOrder(event)">
+              <div class="form-group">
+                <label class="form-label">Full Name</label>
+                <input type="text" id="name" class="form-control" placeholder="Enter your full name" required/>
+              </div>
+              <div class="grid" style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+                <div class="form-group">
+                  <label class="form-label">Phone Number</label>
+                  <input type="tel" id="phone" class="form-control" placeholder="Pone number" required/>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Email Address</label>
+                  <input type="email" id="email" class="form-control" placeholder="Email (Optional)"/>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Delivery Address</label>
+                <textarea id="address" class="form-control" placeholder="Complete address with landmark" required></textarea>
+              </div>
+              <div class="form-group">
+                <label class="form-label">City / State</label>
+                <input type="text" id="city" class="form-control" placeholder="City, State" required/>
+              </div>
+              <div class="form-group" style="margin-top:32px;">
+                <h3 style="margin-bottom:16px;font-family:'Inter',sans-serif;font-size:0.9rem;text-transform:uppercase;letter-spacing:1px;">Payment Method</h3>
+                <div style="padding:16px;background:rgba(201,168,76,0.05);border:1px solid var(--border-gold);border-radius:var(--radius);display:flex;align-items:center;gap:12px;">
+                  <input type="radio" checked style="accent-color:var(--gold)"/>
+                  <div>
+                    <div style="font-weight:600;font-size:0.95rem;">Cash on Delivery / Bank Transfer</div>
+                    <div style="font-size:0.8rem;color:var(--text-secondary);">We will contact you on WhatsApp to confirm payment.</div>
+                  </div>
+                </div>
+              </div>
+              <button type="submit" class="btn btn-gold" style="width:100%;margin-top:32px;justify-content:center;padding:18px;font-size:1.1rem;">Place Your Order →</button>
+            </form>
+          </div>
+
+          <aside class="order-summary-card">
+            <h3 style="margin-bottom:24px;">Your Order</h3>
+            <div id="summary-items">
+              <!-- Rendered by JS -->
+            </div>
+            <div class="summary-total">
+              <span>Total</span>
+              <span id="summary-total-val"></span>
+            </div>
+            <div style="margin-top:24px;background:rgba(13,13,13,0.3);border-radius:12px;padding:16px;font-size:0.85rem;color:var(--text-secondary);">
+              <p>By placing this order, you agree to our Terms and Conditions. Our team will contact you via WhatsApp for confirmation and delivery scheduling.</p>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+<div id="footer-root"></div>
+
+<script src="js/data.js"></script>
+<script>
+  document.getElementById('navbar-root').innerHTML = renderNavbarRoot('cart');
+  document.getElementById('footer-root').innerHTML = renderFooter();
+
+  const cart = getCart();
+  if (cart.length === 0) {
+    window.location.href = 'cart.html';
+  }
+
+  function renderSummary() {
+    const itemsContainer = document.getElementById('summary-items');
+    itemsContainer.innerHTML = cart.map(item => `
+      <div class="summary-item">
+        <span style="color:var(--text-secondary); flex: 1;">${item.name} <small>x${item.quantity}</small></span>
+        <span style="font-weight:600;">${formatPrice(item.price * item.quantity)}</span>
+      </div>
+    `).join('');
+    document.getElementById('summary-total-val').textContent = formatPrice(getCartTotal());
+  }
+
+  async function handlePlaceOrder(event) {
+    event.preventDefault();
+    
+    const customer = {
+      name: document.getElementById('name').value,
+      phone: document.getElementById('phone').value,
+      email: document.getElementById('email').value,
+      address: document.getElementById('address').value,
+      city: document.getElementById('city').value
+    };
+
+    const order = placeOrder(customer);
+    if (order) {
+      // Show success
+      document.getElementById('checkout-content').innerHTML = `
+        <div class="success-panel">
+          <div class="success-icon">✅</div>
+          <h1>Order Placed Successfully!</h1>
+          <p style="margin:16px 0 32px;color:var(--text-secondary);max-width:600px;margin-left:auto;margin-right:auto;">
+            Thank you for shopping with PS Furniture. Your order ID is <strong>#${order.id}</strong>. 
+            Our team will contact you on <strong>${customer.phone}</strong> via WhatsApp to confirm the delivery and payment details.
+          </p>
+          <div style="display:flex;gap:16px;justify-content:center;">
+            <a href="index.html" class="btn btn-outline">Back to Home</a>
+            <a href="${getWALink(`Hello PS Furniture! I just placed an order #${order.id}. Please confirm.`)}" class="btn btn-whatsapp">💬 Chat on WhatsApp</a>
+          </div>
+        </div>
+      `;
+      // Update navbar count
+      updateNavbarCartCount();
+    } else {
+      showToast('There was an error placing your order.', 'error');
+    }
+  }
+
+  renderSummary();
+</script>
+</body>
+</html>

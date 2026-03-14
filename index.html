@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>PS Furniture – Premium Furniture Store | Luxury Home Furnishings</title>
+  <meta name="description" content="PS Furniture offers handcrafted premium furniture for every room. Shop luxury sofas, beds, dining tables and more. Delivered across India."/>
+  <meta name="keywords" content="premium furniture, luxury sofa, king bed, dining table, PS Furniture, home furnishings India"/>
+  <meta property="og:title" content="PS Furniture – Premium Furniture Store"/>
+  <meta property="og:description" content="Handcrafted luxury furniture for discerning homes."/>
+  <link rel="stylesheet" href="css/style.css"/>
+  <style>
+    /* ===== HOME PAGE SPECIFIC ===== */
+    .intro-section { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+    .intro-img { border-radius: var(--radius-lg); overflow: hidden; position: relative; }
+    .intro-img img { width: 100%; height: 480px; object-fit: cover; }
+    .intro-img::after { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(201,168,76,0.1), transparent); }
+    .intro-content .badge { margin-bottom: 20px; }
+    .intro-content h2 { font-size: clamp(2rem,4vw,2.8rem); line-height: 1.2; margin-bottom: 20px; }
+    .intro-features { display: flex; flex-direction: column; gap: 16px; margin-top: 28px; }
+    .intro-feature { display: flex; align-items: flex-start; gap: 14px; padding: 16px; background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); transition: var(--transition); }
+    .intro-feature:hover { border-color: var(--border-gold); }
+    .intro-feature-icon { width: 40px; height: 40px; min-width: 40px; background: rgba(201,168,76,0.1); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; }
+    .intro-feature-text h4 { font-size: 0.95rem; font-weight: 600; margin-bottom: 2px; font-family: 'Inter', sans-serif; }
+    .intro-feature-text p { font-size: 0.82rem; color: var(--text-muted); }
+    .why-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 28px; }
+    .why-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 32px 24px; text-align: center; transition: var(--transition); }
+    .why-card:hover { border-color: var(--border-gold); transform: translateY(-4px); box-shadow: var(--shadow-gold); }
+    .why-icon { font-size: 2.2rem; margin-bottom: 16px; }
+    .why-card h3 { font-size: 1.1rem; margin-bottom: 10px; }
+    .why-card p { font-size: 0.85rem; color: var(--text-secondary); line-height: 1.6; }
+    .testimonials { background: var(--bg-secondary); }
+    .testi-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 28px; }
+    .testi-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 28px; transition: var(--transition); position: relative; }
+    .testi-card::before { content:'"'; position:absolute; top:16px; right:20px; font-size:4rem; color:var(--gold); opacity:0.15; font-family:'Playfair Display',serif; line-height:1; }
+    .testi-card:hover { border-color: var(--border-gold); }
+    .testi-stars { color: var(--gold); font-size: 0.9rem; margin-bottom: 14px; }
+    .testi-text { color: var(--text-secondary); font-size: 0.9rem; line-height: 1.7; margin-bottom: 20px; }
+    .testi-author { display: flex; align-items: center; gap: 12px; }
+    .testi-avatar { width: 42px; height: 42px; border-radius: 50%; background: linear-gradient(135deg,var(--gold),var(--gold-dark)); display: flex; align-items: center; justify-content: center; font-weight: 700; color: #0D0D0D; font-size: 0.9rem; }
+    .testi-name { font-weight: 600; font-size: 0.9rem; }
+    .testi-loc { font-size: 0.78rem; color: var(--text-muted); }
+    .cta-section { background: linear-gradient(135deg, rgba(201,168,76,0.08) 0%, transparent 60%); border: 1px solid var(--border-gold); border-radius: var(--radius-lg); padding: 64px 48px; text-align: center; margin: 0 24px; }
+    .cta-section h2 { font-size: clamp(2rem,4vw,2.8rem); margin-bottom: 16px; }
+    .cta-section p { color: var(--text-secondary); max-width: 520px; margin: 0 auto 32px; }
+    .cta-btns { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+    @media(max-width:900px) { .intro-section{grid-template-columns:1fr;} .why-grid{grid-template-columns:repeat(2,1fr);} .testi-grid{grid-template-columns:1fr;} }
+    @media(max-width:640px) { .why-grid{grid-template-columns:1fr;} .cta-section{padding:40px 24px; margin:0;} }
+  </style>
+</head>
+<body>
+<div id="navbar-root"></div>
+<main>
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-grid"></div>
+    <div class="hero-content">
+      <div class="hero-text">
+        <div class="hero-tag">Premium Furniture Since 2010</div>
+        <h1 class="hero-title">Elevate Your Living <span>Space</span> With Luxury</h1>
+        <p class="hero-desc">Handcrafted furniture that blends timeless design with exceptional craftsmanship. Transform every room into a statement of refined taste.</p>
+        <div class="hero-actions">
+          <a href="products.html" class="btn btn-gold">Explore Collection →</a>
+        </div>
+        <div class="hero-stats">
+          <div><div class="hero-stat-num">500+</div><div class="hero-stat-label">Products Available</div></div>
+          <div><div class="hero-stat-num">10K+</div><div class="hero-stat-label">Happy Customers</div></div>
+          <div><div class="hero-stat-num">14yr</div><div class="hero-stat-label">Of Excellence</div></div>
+        </div>
+      </div>
+      <div class="hero-image-wrap">
+        <div class="hero-image-frame">
+          <img src="https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=900&q=85" alt="Premium Furniture Showroom" loading="lazy"/>
+          <div class="hero-image-overlay"></div>
+        </div>
+        <div class="hero-float-card left">
+          <div class="hero-card-label">Customer Rating</div>
+          <div class="hero-card-value">★ 4.9 / 5.0</div>
+        </div>
+        <div class="hero-float-card right">
+          <div class="hero-card-label">Free Delivery</div>
+          <div class="hero-card-value">Pan India 🚚</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURED PRODUCTS -->
+  <section class="section-pad" style="background:var(--bg-secondary);">
+    <div class="container">
+      <div class="section-header">
+        <span class="badge badge-gold">Featured Collection</span>
+        <h2 style="margin-top:16px;">Our <span class="gold">Finest</span> Pieces</h2>
+        <div class="gold-line"></div>
+        <p>Handpicked bestsellers and new arrivals — crafted for those who settle for nothing less than extraordinary.</p>
+      </div>
+      <div class="product-grid" id="featured-grid"></div>
+      <div style="text-align:center;margin-top:48px;">
+        <a href="products.html" class="btn btn-outline">View All Products →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- WHY CHOOSE US -->
+  <section class="section-pad">
+    <div class="container">
+      <div class="section-header">
+        <h2>Why Choose <span class="gold">PS Furniture</span></h2>
+        <div class="gold-line"></div>
+        <p>We go beyond selling furniture — we create living experiences.</p>
+      </div>
+      <div class="why-grid">
+        <div class="why-card"><div class="why-icon">🏭</div><h3>In-House Manufacturing</h3><p>Full control over quality from raw material to finished product.</p></div>
+        <div class="why-card"><div class="why-icon">🚚</div><h3>Free Pan-India Delivery</h3><p>Doorstep delivery with professional installation across India.</p></div>
+        <div class="why-card"><div class="why-icon">🎨</div><h3>Custom Designs</h3><p>Bespoke furniture tailored to your exact measurements and taste.</p></div>
+        <div class="why-card"><div class="why-icon">💎</div><h3>Premium Materials Only</h3><p>Only the finest woods, fabrics, and hardware — no compromises.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIALS -->
+  <section class="section-pad testimonials">
+    <div class="container">
+      <div class="section-header">
+        <h2>What Our <span class="gold">Customers</span> Say</h2>
+        <div class="gold-line"></div>
+      </div>
+      <div class="testi-grid">
+        <div class="testi-card"><div class="testi-stars">★★★★★</div><p class="testi-text">"The Royal Chesterfield Sofa is an absolute masterpiece. The leather quality is beyond what I expected, and it arrived perfectly assembled. PS Furniture is worth every rupee."</p><div class="testi-author"><div class="testi-avatar">RK</div><div><div class="testi-name">Rahul Kapoor</div><div class="testi-loc">Mumbai, Maharashtra</div></div></div></div>
+        <div class="testi-card"><div class="testi-stars">★★★★★</div><p class="testi-text">"Our bedroom transformation is complete thanks to the King Bed from PS Furniture. The velvet headboard is stunning and the hydraulic storage is genius. Delivery was on time!"</p><div class="testi-author"><div class="testi-avatar">PS</div><div><div class="testi-name">Priya Sharma</div><div class="testi-loc">Delhi, NCR</div></div></div></div>
+        <div class="testi-card"><div class="testi-stars">★★★★☆</div><p class="testi-text">"Ordered the marble coffee table and 6-seater dining set. The marble quality is pristine and the dining table is rock solid. WhatsApp support was very helpful throughout."</p><div class="testi-author"><div class="testi-avatar">AM</div><div><div class="testi-name">Ananya Mehta</div><div class="testi-loc">Bengaluru, Karnataka</div></div></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="section-pad">
+    <div class="container">
+      <div class="cta-section">
+        <span class="badge badge-gold" style="margin-bottom:20px;">Exclusive Offer</span>
+        <h2>Ready to Transform Your <span class="gold">Home?</span></h2>
+        <p>Browse our full collection or contact us for bespoke furniture tailored to your vision. Free consultation available.</p>
+        <div class="cta-btns">
+          <a href="products.html" class="btn btn-gold">Shop Collection →</a>
+          <a id="cta-wa" href="#" class="btn btn-whatsapp">💬 WhatsApp Us</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+<div id="footer-root"></div>
+
+<script src="js/data.js"></script>
+<script>
+  document.getElementById('navbar-root').innerHTML = renderNavbarRoot('home');
+  document.getElementById('footer-root').innerHTML = renderFooter();
+  document.getElementById('cta-wa').href = getWALink();
+
+  // Render featured products
+  const featured = getProducts().filter(p => p.featured && p.active).slice(0,4);
+  document.getElementById('featured-grid').innerHTML = featured.map(p => `
+    <div class="product-card" onclick="location.href='product-detail.html?id=${p.id}'">
+      <div class="product-card-img">
+        <img src="${p.images[0]}" alt="${p.name}" loading="lazy"/>
+        <div class="product-card-badge">
+          ${p.tags.length ? `<span class="badge badge-gold">${p.tags[0]}</span>` : ''}
+        </div>
+      </div>
+      <div class="product-card-body">
+        <div class="product-card-cat">${p.category}</div>
+        <div class="product-card-name">${p.name}</div>
+        <div class="product-card-desc">${p.description}</div>
+        <div class="product-card-rating">
+          <span class="stars">${renderStars(p.rating)}</span>
+          <span class="rating-count">(${p.reviews})</span>
+        </div>
+        <div class="product-card-footer">
+          <div><div class="product-card-price">${formatPrice(p.price)}</div>${p.originalPrice ? `<small style="color:var(--text-muted);text-decoration:line-through;">${formatPrice(p.originalPrice)}</small>` : ''}</div>
+          <div class="product-card-btns">
+            <a href="${getProductWALink(p)}" target="_blank" onclick="event.stopPropagation()" class="icon-btn icon-btn-wa" title="WhatsApp">💬</a>
+            <button class="icon-btn icon-btn-gold" title="Add to Cart" onclick="event.stopPropagation();addToCart(${p.id})">🛒</button>
+            <button class="icon-btn icon-btn-gold" title="View Details" onclick="event.stopPropagation();location.href='product-detail.html?id=${p.id}'">→</button>
+          </div>
+        </div>
+      </div>
+    </div>`).join('');
+</script>
+</body>
+</html>

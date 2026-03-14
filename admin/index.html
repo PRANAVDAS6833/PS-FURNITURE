@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Admin Login – PS Furniture</title>
+  <meta name="robots" content="noindex,nofollow"/>
+  <link rel="stylesheet" href="../css/admin.css"/>
+</head>
+<body>
+<div class="login-page">
+  <div class="login-card">
+    <img src="../assets/logo.png" alt="PS Furniture" style="height:90px;width:auto;margin:0 auto 20px;display:block;"/>
+    <p>Admin Panel — Owner Access Only</p>
+    <form onsubmit="login(event)">
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <input type="password" class="form-control" id="password" placeholder="Enter admin password" required autocomplete="current-password"/>
+      </div>
+      <button type="submit" class="btn btn-gold" style="width:100%;justify-content:center;margin-top:8px;" id="login-btn">🔐 Login to Dashboard</button>
+      <div id="login-error">❌ Incorrect password. Please try again.</div>
+    </form>
+    <p style="margin-top:24px;font-size:0.78rem;color:var(--text-muted);">← <a href="../index.html" style="color:var(--gold);">Back to Website</a></p>
+  </div>
+</div>
+<script src="../js/data.js"></script>
+<script>
+  if (isAdminLoggedIn()) window.location.href = 'dashboard.html';
+  function login(e) {
+    e.preventDefault();
+    const pw = document.getElementById('password').value;
+    const btn = document.getElementById('login-btn');
+    const err = document.getElementById('login-error');
+    btn.textContent = 'Verifying…';
+    btn.disabled = true;
+    setTimeout(() => {
+      if (adminLogin(pw)) {
+        window.location.href = 'dashboard.html';
+      } else {
+        err.style.display = 'block';
+        btn.textContent = '🔐 Login to Dashboard';
+        btn.disabled = false;
+        document.getElementById('password').value = '';
+        document.getElementById('password').focus();
+      }
+    }, 600);
+  }
+</script>
+</body>
+</html>
