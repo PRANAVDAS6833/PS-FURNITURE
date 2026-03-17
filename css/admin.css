@@ -34,6 +34,8 @@ a { text-decoration: none; color: inherit; }
 .btn-sm { padding: 7px 14px; font-size: 0.8rem; }
 .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text-secondary); }
 .btn-outline:hover { border-color: var(--gold); color: var(--gold); }
+.btn-fb { background: #1877F2; color: #fff; margin-top: 12px; }
+.btn-fb:hover { background: #166fe5; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(24,119,242,0.3); }
 #login-error { color: #ff6b6b; font-size: 0.85rem; background: rgba(220,50,50,0.08); border: 1px solid rgba(220,50,50,0.2); border-radius: 8px; padding: 10px 14px; margin-top: 12px; display: none; }
 
 /* ADMIN LAYOUT */

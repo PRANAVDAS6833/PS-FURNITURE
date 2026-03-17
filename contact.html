@@ -67,8 +67,12 @@
               </a>
               <div class="contact-item">
                 <div class="contact-item-icon icon-blue">📍</div>
-                <div><div class="contact-item-label">Showroom</div><div class="contact-item-value" id="c-address">Near Andheri Station, Mumbai, Maharashtra – 400053</div><div class="contact-item-note">Open 7 days, 10am – 8pm</div></div>
+                <div><div class="contact-item-label">Showroom</div><div class="contact-item-value" id="c-address">MG Road, Kochi, Kerala – 682016</div><div class="contact-item-note">Open 7 days, 10am – 8pm</div></div>
               </div>
+              <a href="#" class="contact-item" id="c-fb-link" target="_blank">
+                <div class="contact-item-icon icon-blue" style="background:rgba(24,119,242,0.12);">📘</div>
+                <div><div class="contact-item-label">Facebook</div><div class="contact-item-value" id="c-fb">PS Furniture Official</div><div class="contact-item-note">Follow us for latest updates</div></div>
+              </a>
             </div>
             <a id="wa-main" href="#" target="_blank" class="wa-contact-btn">
               <span>💬</span><span>Chat on WhatsApp</span>
@@ -78,7 +82,7 @@
             <div class="map-header"><span>📍</span><h3>Find Our Showroom</h3></div>
             <div class="map-placeholder">
               <div style="font-size:2.5rem;">🗺️</div>
-              <p style="font-size:0.9rem;text-align:center;" id="map-address">PS Furniture Showroom<br/>Near Andheri Station, Mumbai</p>
+              <p style="font-size:0.9rem;text-align:center;" id="map-address">PS Furniture Showroom<br/>MG Road, Kochi</p>
               <a href="https://maps.google.com" target="_blank" class="btn btn-outline" style="font-size:0.8rem;padding:8px 18px;">Open in Google Maps →</a>
             </div>
           </div>
@@ -163,16 +167,21 @@
   const contact = getContactDetails();
   document.getElementById('c-phone').textContent = contact.phone;
   document.getElementById('c-phone-link').href = `tel:${contact.phone.replace(/\s+/g, '')}`;
+  if (contact.hidePhone) document.getElementById('c-phone-link').style.display = 'none';
   document.getElementById('c-email').textContent = contact.email;
   document.getElementById('c-email-link').href = `mailto:${contact.email}`;
   document.getElementById('c-address').textContent = contact.address;
+  document.getElementById('c-fb-link').href = contact.facebook || '#';
+  if (contact.facebook && contact.facebook.includes('facebook.com/')) {
+    document.getElementById('c-fb').textContent = '@' + contact.facebook.split('facebook.com/')[1].replace(/\/$/, '');
+  }
   document.getElementById('map-address').innerHTML = `PS Furniture Showroom<br/>${contact.address.split(',').slice(0,2).join(',')}`;
 
   document.getElementById('wa-main').href = getWALink('Hello PS Furniture! I would like to know more about your furniture collection.');
   document.getElementById('wa-followup').href = getWALink('Hello PS Furniture! I just submitted an enquiry form and wanted to follow up.');
 
   const faqs = [
-    { q: 'Do you deliver across all of India?', a: 'Yes! We offer free delivery to 200+ cities across India. For remote areas, a small delivery charge may apply.' },
+    { q: 'Do you deliver across all of Kerala?', a: 'Yes! We offer free delivery to all major towns and cities across Kerala. Our logistics team ensures safe handling of your premium furniture.' },
     { q: 'What is the warranty on your furniture?', a: 'All PS Furniture products come with a 5-year structural warranty against manufacturing defects.' },
     { q: 'Can I get custom-sized furniture?', a: 'Absolutely. We specialize in bespoke furniture. Contact us with your requirements and we\'ll design a piece tailored to your space.' },
     { q: 'How long does delivery take?', a: 'Standard delivery takes 7–14 working days depending on your location. Rush orders available for select products.' },

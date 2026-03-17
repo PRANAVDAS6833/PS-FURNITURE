@@ -29,6 +29,11 @@
   <section class="section-pad" style="padding-top:20px;">
     <div class="container">
       <div id="checkout-content">
+        <div class="checkout-progress" style="display:flex;justify-content:space-between;margin-bottom:40px;position:relative;padding:0 20px;">
+          <div style="display:flex;flex-direction:column;align-items:center;z-index:1;background:var(--bg-main);padding:0 10px;"><div style="width:30px;height:30px;border-radius:50%;background:var(--gold);display:flex;align-items:center;justify-content:center;color:#0D0D0D;font-weight:700;margin-bottom:8px;">1</div><span style="font-size:0.75rem;font-weight:600;">Details</span></div>
+          <div style="display:flex;flex-direction:column;align-items:center;z-index:1;background:var(--bg-main);padding:0 10px;"><div style="width:30px;height:30px;border-radius:50%;background:var(--bg-card);border:2px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--text-muted);font-weight:700;margin-bottom:8px;">2</div><span style="font-size:0.75rem;color:var(--text-muted);">Confirmation</span></div>
+          <div style="position:absolute;top:15px;left:40px;right:40px;height:2px;background:var(--border);z-index:0;"></div>
+        </div>
         <div class="checkout-layout">
           <div class="checkout-form-card">
             <h3 style="margin-bottom:28px;font-family:'Inter',sans-serif;font-size:1.1rem;text-transform:uppercase;letter-spacing:1px;">Delivery Information</h3>
@@ -40,7 +45,7 @@
               <div class="grid" style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
                 <div class="form-group">
                   <label class="form-label">Phone Number</label>
-                  <input type="tel" id="phone" class="form-control" placeholder="Pone number" required/>
+                  <input type="tel" id="phone" class="form-control" placeholder="Phone number" required/>
                 </div>
                 <div class="form-group">
                   <label class="form-label">Email Address</label>
@@ -48,29 +53,29 @@
                 </div>
               </div>
               <div class="form-group">
-                <label class="form-label">Delivery Address</label>
-                <textarea id="address" class="form-control" placeholder="Complete address with landmark" required></textarea>
+                <label class="form-label">Delivery Address (All Kerala)</label>
+                <textarea id="address" class="form-control" placeholder="Complete address in Kerala with landmark" required></textarea>
               </div>
               <div class="form-group">
-                <label class="form-label">City / State</label>
-                <input type="text" id="city" class="form-control" placeholder="City, State" required/>
+                <label class="form-label">City / District</label>
+                <input type="text" id="city" class="form-control" placeholder="e.g. Kochi, TVM, Wayanad" required/>
               </div>
               <div class="form-group" style="margin-top:32px;">
                 <h3 style="margin-bottom:16px;font-family:'Inter',sans-serif;font-size:0.9rem;text-transform:uppercase;letter-spacing:1px;">Payment Method</h3>
                 <div style="padding:16px;background:rgba(201,168,76,0.05);border:1px solid var(--border-gold);border-radius:var(--radius);display:flex;align-items:center;gap:12px;">
                   <input type="radio" checked style="accent-color:var(--gold)"/>
                   <div>
-                    <div style="font-weight:600;font-size:0.95rem;">Cash on Delivery / Bank Transfer</div>
-                    <div style="font-size:0.8rem;color:var(--text-secondary);">We will contact you on WhatsApp to confirm payment.</div>
+                    <div style="font-weight:600;font-size:0.95rem;">Cash on Delivery / Digital Payment</div>
+                    <div style="font-size:0.8rem;color:var(--text-secondary);">Safe and secure payment at the time of delivery across Kerala.</div>
                   </div>
                 </div>
               </div>
-              <button type="submit" class="btn btn-gold" style="width:100%;margin-top:32px;justify-content:center;padding:18px;font-size:1.1rem;">Place Your Order →</button>
+              <button type="submit" class="btn btn-gold" style="width:100%;margin-top:32px;justify-content:center;padding:18px;font-size:1.1rem;box-shadow:var(--shadow-gold);">Complete Your Premium Order →</button>
             </form>
           </div>
 
           <aside class="order-summary-card">
-            <h3 style="margin-bottom:24px;">Your Order</h3>
+            <h3 style="margin-bottom:24px;">Order Summary</h3>
             <div id="summary-items">
               <!-- Rendered by JS -->
             </div>
@@ -79,7 +84,8 @@
               <span id="summary-total-val"></span>
             </div>
             <div style="margin-top:24px;background:rgba(13,13,13,0.3);border-radius:12px;padding:16px;font-size:0.85rem;color:var(--text-secondary);">
-              <p>By placing this order, you agree to our Terms and Conditions. Our team will contact you via WhatsApp for confirmation and delivery scheduling.</p>
+              <p>📍 Free delivery within Kerala included.</p>
+              <p style="margin-top:8px;">By placing this order, you agree to our terms. Our luxury concierge will contact you via WhatsApp for scheduling.</p>
             </div>
           </aside>
         </div>
@@ -134,7 +140,8 @@
           </p>
           <div style="display:flex;gap:16px;justify-content:center;">
             <a href="index.html" class="btn btn-outline">Back to Home</a>
-            <a href="${getWALink(`Hello PS Furniture! I just placed an order #${order.id}. Please confirm.`)}" class="btn btn-whatsapp">💬 Chat on WhatsApp</a>
+            <a href="track-order.html?id=${order.id}" class="btn btn-gold">📦 Track Your Order</a>
+            <a href="${getWALink(`Hello PS Furniture! I just placed an order #${order.id}. Please confirm.`)}" class="btn btn-whatsapp">💬 WhatsApp Support</a>
           </div>
         </div>
       `;

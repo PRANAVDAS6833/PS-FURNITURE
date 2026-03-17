@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Track Order – PS Furniture</title>
+  <link rel="stylesheet" href="css/style.css"/>
+  <style>
+    .track-container { max-width: 600px; margin: 0 auto; background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 40px; }
+    .status-timeline { margin-top: 40px; position: relative; padding-left: 30px; }
+    .status-timeline::before { content: ''; position: absolute; left: 4px; top: 0; bottom: 0; width: 2px; background: var(--border); }
+    .status-step { position: relative; margin-bottom: 32px; }
+    .status-step::before { content: ''; position: absolute; left: -30px; top: 4px; width: 10px; height: 10px; border-radius: 50%; background: var(--border); border: 2px solid var(--bg-card); z-index: 1; }
+    .status-step.active::before { background: var(--gold); box-shadow: 0 0 0 4px rgba(201,168,76,0.2); }
+    .status-step.completed::before { background: var(--gold); }
+    .status-label { font-weight: 700; font-size: 1rem; margin-bottom: 4px; }
+    .status-time { font-size: 0.8rem; color: var(--text-muted); }
+    .tracking-info { margin-top: 24px; padding: 16px; background: rgba(201,168,76,0.05); border: 1px solid var(--border-gold); border-radius: var(--radius); }
+  </style>
+</head>
+<body>
+<div id="navbar-root"></div>
+<main>
+  <div class="page-header">
+    <div class="container">
+      <h1>Track <span class="gold">Order</span></h1>
+      <p>Enter your Order ID to see the current status of your furniture delivery.</p>
+    </div>
+  </div>
+
+  <section class="section-pad" style="padding-top:20px;">
+    <div class="container">
+      <div class="track-container">
+        <div class="form-group">
+          <label class="form-label">Order ID</label>
+          <div style="display:flex;gap:12px;">
+            <input type="text" id="order-id-input" class="form-control" placeholder="e.g. PS123456"/>
+            <button class="btn btn-gold" onclick="trackOrder()">Track</button>
+          </div>
+        </div>
+
+        <div id="track-result" style="display:none;margin-top:40px;">
+          <!-- Result will be injected here -->
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+<div id="footer-root"></div>
+
+<script src="js/data.js"></script>
+<script>
+  document.getElementById('navbar-root').innerHTML = renderNavbarRoot('home');
+  document.getElementById('footer-root').innerHTML = renderFooter();
+
+  function trackOrder() {
+    const id = document.getElementById('order-id-input').value.trim();
+    if (!id) return;
+
+    const orders = getOrders();
+    const order = orders.find(o => o.id === id);
+    const resultDiv = document.getElementById('track-result');
+    resultDiv.style.display = 'block';
+
+    if (!order) {
+      resultDiv.innerHTML = `<div style="text-align:center;padding:20px;"><div style="font-size:3rem;">🔍</div><p style="margin-top:12px;color:var(--text-secondary);">Order not found. Please check your Order ID.</p></div>`;
+      return;
+    }
+
+    const statuses = ['Pending', 'Confirmed', 'Shipped', 'Delivered'];
+    const currentIndex = statuses.indexOf(order.status);
+
+    let timelineHtml = statuses.map((s, i) => {
+      let cls = '';
+      if (i === currentIndex) cls = 'active';
+      else if (i < currentIndex) cls = 'completed';
+      return `
+        <div class="status-step ${cls}">
+          <div class="status-label">${s}</div>
+          <div class="status-time">${i <= currentIndex ? 'Status updated' : 'Pending'}</div>
+        </div>
+      `;
+    }).join('');
+
+    resultDiv.innerHTML = `
+      <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border);padding-bottom:16px;">
+        <h3 style="margin:0;">Order Status</h3>
+        <span class="badge badge-gold">${order.status}</span>
+      </div>
+      <div class="status-timeline">${timelineHtml}</div>
+      ${order.trackingId ? `
+        <div class="tracking-info">
+          <div style="font-weight:700;font-size:0.9rem;margin-bottom:4px;">Delivery Partner Info</div>
+          <div style="font-size:0.85rem;color:var(--text-secondary);">Tracking ID: <strong>${order.trackingId}</strong></div>
+          ${order.trackingUrl ? `<a href="${order.trackingUrl}" target="_blank" style="color:var(--gold);font-size:0.85rem;display:inline-block;margin-top:8px;">Track on Partner Website →</a>` : ''}
+        </div>
+      ` : ''}
+      <div style="margin-top:32px;text-align:center;">
+        <a href="${getWALink(`Hello PS Furniture! I'm inquiring about order ${order.id}.`)}" target="_blank" class="btn btn-whatsapp" style="width:100%;justify-content:center;">💬 Chat with Support</a>
+      </div>
+    `;
+  }
+
+  // Auto-track if ID is in URL
+  const params = new URLSearchParams(window.location.search);
+  const id = params.get('id');
+  if (id) {
+    document.getElementById('order-id-input').value = id;
+    trackOrder();
+  }
+</script>
+</body>
+</html>

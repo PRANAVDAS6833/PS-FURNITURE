@@ -107,11 +107,15 @@
         <table class="specs-table"><tbody>${specRows}</tbody></table>
         <div class="detail-actions">
           <button class="btn btn-gold" onclick="addToCart(p.id)">🛒 Add to Shopping Cart</button>
-          <a id="wa-buy" href="${getProductWALink(p)}" target="_blank" class="btn btn-whatsapp">💬 Buy / Enquire via WhatsApp</a>
-          <a href="contact.html" class="btn btn-outline">📞 Contact Us for Pricing</a>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+            <a id="wa-buy" href="${getProductWALink(p)}" target="_blank" class="btn btn-whatsapp">💬 WhatsApp</a>
+            <a href="${getIGLink()}" target="_blank" class="btn btn-outline" style="background:#E1306C;color:white;border:none;">📸 Instagram</a>
+          </div>
+          <a href="${getFBLink()}" target="_blank" class="btn btn-outline" style="background:#1877F2;color:white;border:none;">📘 Facebook Messenger</a>
+          <a id="phone-contact-btn" href="contact.html" class="btn btn-outline">📞 Contact Us for Pricing</a>
         </div>
         <div style="margin-top:20px;padding:16px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);font-size:0.85rem;color:var(--text-secondary);">
-          🚚 <strong style="color:var(--text-primary);">Free delivery</strong> across India &nbsp;·&nbsp; 🏭 <strong style="color:var(--text-primary);">In-house manufactured</strong> &nbsp;·&nbsp; 🛡️ <strong style="color:var(--text-primary);">5-year warranty</strong>
+          🚚 <strong style="color:var(--text-primary);">Free delivery</strong> across Kerala &nbsp;·&nbsp; 🏭 <strong style="color:var(--text-primary);">In-house manufactured</strong> &nbsp;·&nbsp; 🛡️ <strong style="color:var(--text-primary);">5-year warranty</strong>
         </div>
       </div>`;
 
@@ -132,6 +136,10 @@
               </div>
             </div>
           </div>`).join('')}</div>`;
+    }
+    if (contact.hidePhone) {
+      const btn = document.getElementById('phone-contact-btn');
+      if (btn) btn.style.display = 'none';
     }
   }
 

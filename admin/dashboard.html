@@ -128,12 +128,26 @@
             <input type="email" class="form-control" id="s-email" placeholder="info@psfurniture.com"/>
           </div>
           <div class="form-group">
+            <label class="form-label">Facebook Page/Profile Link</label>
+            <input type="url" class="form-control" id="s-facebook" placeholder="https://facebook.com/psfurniture"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Instagram Profile Link</label>
+            <input type="url" class="form-control" id="s-instagram" placeholder="https://instagram.com/psfurniture"/>
+          </div>
+          <div class="form-group">
             <label class="form-label">Showroom Address</label>
             <textarea class="form-control" id="s-address" placeholder="Full address…" style="min-height:80px;"></textarea>
           </div>
           <div class="form-group">
             <label class="form-label">Default WhatsApp Message</label>
             <textarea class="form-control" id="s-wa-msg" placeholder="Hello PS Furniture! I'm interested in..." style="min-height:80px;"></textarea>
+          </div>
+          <div class="form-group">
+            <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-size:0.9rem;margin-top:10px;">
+              <input type="checkbox" id="s-hide-phone" style="width:18px;height:18px;accent-color:var(--gold);"/>
+              <span>Hide phone number on public website</span>
+            </label>
           </div>
           <div style="margin-top:24px;border-top:1px solid var(--border);padding-top:24px;text-align:right;">
             <button class="btn btn-gold" onclick="saveSettings()">💾 Save Settings</button>
@@ -197,8 +211,12 @@
         <input type="hidden" id="p-tags"/>
       </div>
       <div class="form-group">
-        <label class="form-label">Product Images</label>
-        <p style="font-size:0.8rem;color:var(--text-muted);margin-bottom:10px;">Enter image URLs (Unsplash, Google Drive, etc.) or paste multiple separated by comma/new line.</p>
+        <label class="form-label" style="display:flex;justify-content:space-between;align-items:center;">
+          Product Images
+          <button class="btn btn-outline btn-sm" onclick="document.getElementById('p-file-input').click()">📁 Upload from Device</button>
+        </label>
+        <p style="font-size:0.8rem;color:var(--text-muted);margin-bottom:10px;">Enter image URLs or upload directly from your device.</p>
+        <input type="file" id="p-file-input" multiple accept="image/*" style="display:none;" onchange="handleFileUpload(event)"/>
         <textarea class="form-control" id="p-images" placeholder="https://images.unsplash.com/… &#10;https://images.unsplash.com/…" style="min-height:80px;" oninput="previewImages()"></textarea>
         <div class="img-preview-grid" id="img-preview"></div>
       </div>
@@ -323,6 +341,9 @@ function renderCategories() {
   const catCounts = {};
   getProducts().forEach(p => { catCounts[p.category] = (catCounts[p.category] || 0) + 1; });
   document.getElementById('cat-list').innerHTML = cats.length ? cats.map(c => `
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 16px;background:var(--bg-secondary);border:1px solid var(--border);border-radius:12px;margin-bottom:10px;">
+      <span style="font-weight:600;">${c}</span>
+      <span class="badge" style="background:rgba(201,168,76,0.1);color:var(--gold);font-size:0.75rem;">${catCounts[c] || 0} Products</span>
     </div>`).join('') : '<p style="color:var(--text-muted);">No categories yet.</p>';
 }
 
@@ -349,7 +370,7 @@ function renderOrders() {
       <td>
         <div style="display:flex;gap:8px;">
           <button class="btn-edit btn-sm" onclick="viewOrder(${o.id})">👁️ View</button>
-          <select class="form-control btn-sm" onchange="updateStatus(${o.id}, this.value)" style="width:110px;padding:4px 8px;">
+          <select class="form-control btn-sm" onchange="updateStatus('${o.id}', this.value)" style="width:110px;padding:4px 8px;">
             <option value="Pending" ${o.status==='Pending'?'selected':''}>Pending</option>
             <option value="Confirmed" ${o.status==='Confirmed'?'selected':''}>Confirmed</option>
             <option value="Shipped" ${o.status==='Shipped'?'selected':''}>Shipped</option>
@@ -368,9 +389,23 @@ function updateStatus(id, status) {
   if (o) {
     o.status = status;
     saveOrders(orders);
-    showToast(`Order #${id} status updated to ${status}`);
+    showToast(`Order ${id} status updated to ${status}`);
     renderOrders();
   }
+}
+
+function updateTracking(id) {
+  const orders = getOrders();
+  const o = orders.find(x => x.id === id);
+  if (!o) return;
+  
+  const tId = document.getElementById(`t-id-${id}`).value;
+  const tUrl = document.getElementById(`t-url-${id}`).value;
+  
+  o.trackingId = tId;
+  o.trackingUrl = tUrl;
+  saveOrders(orders);
+  showToast(`Tracking updated for Order ${id}`);
 }
 
 function viewOrder(id) {
@@ -396,6 +431,20 @@ function viewOrder(id) {
               <div style="margin-bottom:2px;">📞 ${o.customer.phone}</div>
               <div style="margin-bottom:8px;">✉️ ${o.customer.email || 'N/A'}</div>
               <div style="color:var(--text-secondary);font-size:0.9rem;">📍 ${o.customer.address}, ${o.customer.city}</div>
+            </div>
+          </div>
+          <div style="margin-bottom:20px;">
+            <h4 style="margin-bottom:8px;font-size:0.8rem;text-transform:uppercase;color:var(--text-muted);">Tracking Information</h4>
+            <div style="background:var(--bg-secondary);padding:16px;border-radius:12px;">
+              <div class="form-group">
+                <label class="form-label">Tracking ID / Number</label>
+                <input type="text" class="form-control" id="t-id-${o.id}" value="${o.trackingId || ''}" placeholder="e.g. DELIV12345"/>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Tracking Link (URL)</label>
+                <input type="url" class="form-control" id="t-url-${o.id}" value="${o.trackingUrl || ''}" placeholder="https://tracking-site.com/..."/>
+              </div>
+              <button class="btn btn-gold btn-sm" onclick="updateTracking('${o.id}')">Update Tracking Details</button>
             </div>
           </div>
           <div>
@@ -431,8 +480,11 @@ function loadSettings() {
   document.getElementById('s-phone').value = contact.phone || '';
   document.getElementById('s-whatsapp').value = contact.whatsapp || '';
   document.getElementById('s-email').value = contact.email || '';
+  document.getElementById('s-facebook').value = contact.facebook || '';
+  document.getElementById('s-instagram').value = contact.instagram || '';
   document.getElementById('s-address').value = contact.address || '';
   document.getElementById('s-wa-msg').value = contact.waMessage || '';
+  document.getElementById('s-hide-phone').checked = contact.hidePhone || false;
 }
 
 function saveSettings() {
@@ -440,8 +492,11 @@ function saveSettings() {
     phone: document.getElementById('s-phone').value.trim(),
     whatsapp: document.getElementById('s-whatsapp').value.trim(),
     email: document.getElementById('s-email').value.trim(),
+    facebook: document.getElementById('s-facebook').value.trim(),
+    instagram: document.getElementById('s-instagram').value.trim(),
     address: document.getElementById('s-address').value.trim(),
-    waMessage: document.getElementById('s-wa-msg').value.trim()
+    waMessage: document.getElementById('s-wa-msg').value.trim(),
+    hidePhone: document.getElementById('s-hide-phone').checked
   };
   
   if (!contact.phone || !contact.email) {
@@ -514,11 +569,35 @@ function removeTag(i) { currentTags.splice(i,1); renderTags(); }
 function previewImages() {
   const raw = document.getElementById('p-images').value;
   const urls = raw.split(/[\n,]+/).map(u => u.trim()).filter(Boolean);
-  document.getElementById('img-preview').innerHTML = urls.slice(0,6).map((u,i) => `
+  document.getElementById('img-preview').innerHTML = urls.slice(0,10).map((u,i) => `
     <div class="img-preview">
       <img src="${u}" alt="Preview ${i+1}" onerror="this.parentElement.style.opacity='0.3'"/>
       <button class="remove-img" onclick="removeImg(${i})">✕</button>
     </div>`).join('');
+}
+
+function handleFileUpload(e) {
+  const files = e.target.files;
+  if (!files || files.length === 0) return;
+  
+  const imgTextarea = document.getElementById('p-images');
+  let currentUrls = imgTextarea.value.split(/[\n,]+/).map(u => u.trim()).filter(Boolean);
+  
+  showToast(`Processing ${files.length} image(s)...`, 'info');
+  
+  Array.from(files).forEach(file => {
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const base64 = event.target.result;
+      currentUrls.push(base64);
+      imgTextarea.value = currentUrls.join('\n');
+      previewImages();
+    };
+    reader.readAsDataURL(file);
+  });
+  
+  // Reset input so same file can be selected again
+  e.target.value = '';
 }
 
 function removeImg(i) {
