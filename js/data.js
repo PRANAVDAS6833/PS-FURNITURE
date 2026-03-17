@@ -4,14 +4,14 @@ const ADMIN_PASSWORD = "PSfurniture2024!";
 const DEFAULT_WA_NUMBER = "919876543210"; 
 const DEFAULT_WA_MESSAGE = "Hello PS Furniture! I'm interested in your products.";
 const DEFAULT_CONTACT = {
-  phone: "+91 98765 43210",
+  phone: "910000000000",
   email: "info@psfurniture.com",
   address: "MG Road, Kochi, Kerala – 682016",
-  whatsapp: DEFAULT_WA_NUMBER,
-  waMessage: DEFAULT_WA_MESSAGE,
-  facebook: "https://facebook.com/psfurniture",
+  whatsapp: "919876543210",
+  waMessage: "Hello PS Furniture! I'm interested in your products.",
+  facebook: "https://www.facebook.com/share/1DvxNpM5me/",
   instagram: "https://instagram.com/psfurniture",
-  hidePhone: false
+  hidePhone: true
 };
 
 // ===== LOCAL STORAGE HELPERS =====
